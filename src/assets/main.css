@@ -12,6 +12,10 @@
   margin-block: 1rem;
 }
 
+nav a.router-link-active {
+  font-weight: bold;
+}
+
 @media screen and (width >= 1014px) {
   #app {
     width: 50%;

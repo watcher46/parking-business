@@ -1,56 +1,62 @@
-<script>
+<script setup lang="ts">
+import { ref } from 'vue';
+import router from '../router';
 import { useLoginStore } from '../stores/login';
+import {LOGIN_ENDPOINT, LOGIN_EMAIL, LOGIN_PASSWORD} from '../components/api';
 
-const LOGIN_ENDPOINT = `https://parkdemeer-afde952e3fef.herokuapp.com/v1/auth/password`;
 
-export default {
-  data: () => {
-    return {
-      email: 'super@parkdemeer.nl',
-      password: 'SUPER_USER_SECRET_PASS',
-      loginError: false,
-    };
-  },
-  methods: {
-    async login(e) {
-      e.preventDefault();
-      this.loginError = false;
-      const store = useLoginStore();
-      
-      try {
-        const responseObject = await fetch(LOGIN_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: this.email,
-            password: this.password,
-          }),
-        });
+//make some reactive models
+const email      = ref(LOGIN_EMAIL);
+const password   = ref(LOGIN_PASSWORD);
+const loginError = ref(false);
 
-        const response = await responseObject.json();
+//the login function
+async function login(event: any) {
+  //don't submit the form
+  event.preventDefault();
 
-        if(!responseObject.ok) {
-          throw new Error(`Response message: ${response.status.message}`);
-        }
+  //reset the login-error message
+  loginError.value = false;
 
-        const authToken = response.data.auth.accessToken;
-        
-        store.accessToken = authToken;
+  //initialize the store
+  const store = useLoginStore();
+  
+  try {
+    //try to login
+    const responseObject = await fetch(LOGIN_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    });
 
-        this.$router.push({name: 'home'});
-      } catch (error) {
-        console.error(error.message);
-        this.loginError = true;
-      }
-    },
-  },
+    const response = await responseObject.json();
+
+    //when not a good response, throw an error
+    if(!responseObject.ok) {
+      throw new Error(`Response message: ${response.status.message}`);
+    }
+    
+    //store the token in the store
+    store.accessToken = response.data.auth.accessToken;
+
+    //redirect to the home page
+    router.push({name: 'home'});
+  } catch (error: any) {
+    //console log the error and show the user an error message
+    console.error(error.message);
+    loginError.value = true;
+  }
 }
 </script>
 
 <template>
   <main>
+    <h2>Login to ParkingBusiness</h2>
     <form @submit.prevent="login">
       <div class="loginError" v-if="loginError">Email/password is incorrect.</div>
       <label>Email<input type="email" v-model="email" placeholder="Email"></label>

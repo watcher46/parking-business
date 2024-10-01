@@ -12,6 +12,4 @@ const app = createApp(App)
 app.use(pinia);
 app.use(router);
 
-const loginStore = useLoginStore();
-
 app.mount('#app')
