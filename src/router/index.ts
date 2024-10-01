@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import { useLoginStore } from '@/stores/login';
-import { fetchUser } from '@/components/api';
+import { fetchParkingSpaces, fetchUser } from '@/components/api';
 
 
 const router = createRouter({
@@ -18,30 +18,22 @@ const router = createRouter({
       name: 'building',
       meta: { requiresAuth: true },
       component: () => import('../views/BuildingView.vue'),
-      beforeEnter: (to, from, next) => {
-        console.log('this works!');
-        next();
-      }
+      beforeEnter: async () => {
+        const store = useLoginStore();
+        store.getParkingSpaces();
+      },
     },
     {
       path: '/sessions',
       name: 'sessions',
       meta: { requiresAuth: true },
-      component: () => import('../views/SessionsView.vue'),
-      beforeEnter: (to, from, next) => {
-        console.log('this works!');
-        next();
-      }
+      component: () => import('../views/SessionsView.vue')
     },
     {
       path: '/login',
       name: 'login',
       meta: { requiresAuth: false },
-      component: () => import('../views/LoginView.vue'),
-      beforeEnter: (to, from, next) => {
-        console.log('this works!');
-        next();
-      }
+      component: () => import('../views/LoginView.vue')
     }
   ]
 });
@@ -53,14 +45,8 @@ router.beforeEach(async (to, from, next) => {
     if(store.hasToken && !store.isLoggedIn) {
       store.setAccessTokenFromStorage();
       const response = await fetchUser(store.getAccessToken);
-      //when not successful, throw an error
-      if(!response.ok) {
-        //do nothing yet
-      }
-      
-      const body = response.json();
-      console.log(body.data.user);
-      store.setUser = body.data.user;
+
+      store.setUser = response.data.user;
       store.setAccessTokenFromStorage;
     }
 

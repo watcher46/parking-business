@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { RouterLink, RouterView,  } from 'vue-router'
 import router  from './router';
-import { useLoginStore } from './stores/login';
 import { logout } from './components/api';
 
 function logoutUser() {
   logout();
   router.push({name: 'login'});
 }
+
 </script>
 
 <template>

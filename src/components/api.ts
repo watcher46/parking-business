@@ -1,9 +1,10 @@
 import { useLoginStore } from "@/stores/login";
 
-export const LOGIN_ENDPOINT = `https://parkdemeer-afde952e3fef.herokuapp.com/v1/auth/password`;
-export const LOGIN_EMAIL    = 'super@parkdemeer.nl';
-export const LOGIN_PASSWORD = 'SUPER_USER_SECRET_PASS';
-export const USER_ENDPOINT  = `https://parkdemeer-afde952e3fef.herokuapp.com/v1/auth/me`;
+export const LOGIN_ENDPOINT   = `https://parkdemeer-afde952e3fef.herokuapp.com/v1/auth/password`;
+export const LOGIN_EMAIL      = 'super@parkdemeer.nl';
+export const LOGIN_PASSWORD   = 'SUPER_USER_SECRET_PASS';
+export const USER_ENDPOINT    = `https://parkdemeer-afde952e3fef.herokuapp.com/v1/auth/me`;
+export const SPACES_ENDPOINT  = `https://parkdemeer-afde952e3fef.herokuapp.com/v1/parking/spaces/list?offset=0&limit=20`;
 
 
 export async function loginUser(email: string, password: string) {
@@ -35,6 +36,22 @@ export async function fetchUser(token: string) {
     }
 
     return await response.json();
+}
+
+export async function fetchParkingSpaces(token: string) {
+  const response = await fetch(SPACES_ENDPOINT, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+  });
+
+  if (!response.ok) {
+      throw new Error('Something went wrong.');
+  }
+
+  return await response.json();
 }
 
 export function logout(): void {
