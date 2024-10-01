@@ -1,5 +1,23 @@
 @import './base.css';
 
 #app {
+  margin: 0 auto;
+  width: 100%;
+}
+
+#app header nav {
   display: flex;
+  gap: 1rem;
+  margin-inline: 1rem;
+  margin-block: 1rem;
+}
+
+@media screen and (width >= 1014px) {
+  #app {
+    width: 50%;
+  }
+
+  #app header nav {
+    margin-inline: 0;
+  }
 }
