@@ -2,15 +2,15 @@
 import { ref } from 'vue';
 import router from '../router';
 import { useLoginStore } from '../stores/login';
-import {LOGIN_ENDPOINT, LOGIN_EMAIL, LOGIN_PASSWORD} from '../components/api';
+import {LOGIN_EMAIL, LOGIN_PASSWORD, loginUser } from '@/components/api';
 
 
-//make some reactive models
+//link input fields
 const email      = ref(LOGIN_EMAIL);
 const password   = ref(LOGIN_PASSWORD);
 const loginError = ref(false);
 
-//the login function
+//log the user in!
 async function login(event: any) {
   //don't submit the form
   event.preventDefault();
@@ -23,26 +23,16 @@ async function login(event: any) {
   
   try {
     //try to login
-    const responseObject = await fetch(LOGIN_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email.value,
-        password: password.value,
-      }),
-    });
+    const response = await loginUser(email.value, password.value);
+    const body     = await response.json();
 
-    const response = await responseObject.json();
-
-    //when not a good response, throw an error
-    if(!responseObject.ok) {
-      throw new Error(`Response message: ${response.status.message}`);
+    //when not successful, throw an error
+    if(!response.ok) {
+      throw new Error(`Response message: ${body.status.message}`);
     }
     
     //store the token in the store
-    store.accessToken = response.data.auth.accessToken;
+    store.setAccessToken(body.data.auth.accessToken);
 
     //redirect to the home page
     router.push({name: 'home'});

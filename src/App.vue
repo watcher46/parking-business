@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView,  } from 'vue-router'
 import router  from './router';
 import { useLoginStore } from './stores/login';
+import { logout } from './components/api';
 
-function logout() {
-  const store = useLoginStore();
-  store.logout();
+function logoutUser() {
+  logout();
   router.push({name: 'login'});
 }
 </script>
@@ -18,7 +18,7 @@ function logout() {
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/sessions">Parking sessions</RouterLink>
         <RouterLink to="/building">Building</RouterLink>
-        <button @click="logout">Logout</button>
+        <button @click="logoutUser">Logout</button>
       </nav>
     </div>
   </header>
