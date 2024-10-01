@@ -26,3 +26,22 @@ function logoutUser() {
   <RouterView />
 </template>
 
+<style>
+  h1 {
+    text-align: center;
+  }
+  nav {
+    background: rgba(255,255,255, 0.5);
+    padding: 1rem;
+  }
+  nav a {
+    color: var(--link-color);
+  }
+
+  nav a:hover {
+    text-decoration: none;
+  }
+  nav a:visited {
+    color: var(--link-color-visited);
+  }
+</style>
