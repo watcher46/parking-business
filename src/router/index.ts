@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useLoginStore } from '../stores/login';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,19 +9,42 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      meta: { requiresAuth: true },
       component: HomeView
     },
     {
       path: '/building',
       name: 'building',
+      meta: { requiresAuth: true },
       component: () => import('../views/BuildingView.vue')
     },
     {
       path: '/sessions',
       name: 'sessions',
+      meta: { requiresAuth: true },
       component: () => import('../views/SessionsView.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      meta: { requiresAuth: false },
+      component: () => import('../views/LoginView.vue')
     }
   ]
-})
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) {
+    const store = useLoginStore();
+    if (store.isLoggedIn) {
+      next();
+    } else {
+      next('/login');
+    }
+  } else {
+    // Non-protected route, allow access
+    next();
+  }
+});
 
 export default router
